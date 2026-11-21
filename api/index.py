@@ -74,6 +74,19 @@ def _api_error(e: ApiError):
     return jsonify(error=e.message, code=e.code), e.status
 
 
+@app.errorhandler(Exception)
+def _unexpected(e: Exception):
+    from werkzeug.exceptions import HTTPException
+
+    if isinstance(e, HTTPException):
+        return jsonify(error=e.description, code="not_found" if e.code == 404 else "failed"), e.code
+    app.logger.exception("Unhandled error")
+    if isinstance(e, yt_dlp.utils.DownloadError):
+        err = explain(e)
+        return jsonify(error=err.message, code=err.code), err.status
+    return jsonify(error=f"{type(e).__name__}: {e}", code="failed"), 500
+
+
 _ffmpeg_path: str | None = None
 
 
@@ -117,12 +130,17 @@ def check_url(raw: str | None) -> str:
         raise ApiError("invalid_url", "That doesn't look like a web link.")
     if not ALLOW_PRIVATE:
         # Stop the server from being used to reach internal addresses.
+        if "." not in parts.hostname and ":" not in parts.hostname:
+            raise ApiError("invalid_url", "That doesn't look like a web link.")
         try:
             addrs = {ai[4][0] for ai in socket.getaddrinfo(parts.hostname, None)}
-        except socket.gaierror:
-            raise ApiError("invalid_url", "That website couldn't be found.")
+        except (OSError, UnicodeError):
+            raise ApiError("unreachable", "That website couldn't be found.", 400)
         for a in addrs:
-            ip = ipaddress.ip_address(a.split("%")[0])
+            try:
+                ip = ipaddress.ip_address(a.split("%")[0])
+            except ValueError:
+                continue
             if not ip.is_global:
                 raise ApiError("invalid_url", "That link points to a private address.")
     return url
