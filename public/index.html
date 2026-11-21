@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f5f8fb" />
+  <title>GrabIt · Download and convert media</title>
+  <meta name="description" content="Save videos, reels and audio from YouTube, Instagram, Facebook, TikTok and X, then convert them in your browser." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.3' cy='.25' r='.8'%3E%3Cstop offset='0' stop-color='%232d9cdb'/%3E%3Cstop offset='.7' stop-color='%23176b9c'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='16' fill='url(%23g)'/%3E%3Cpath d='M16 8v12m-5-5 5 5 5-5M10 24h12' stroke='%23fff' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="/styles.css" />
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <div class="nav-wrap container">
+    <nav class="nav-bar glass" aria-label="Main">
+      <a class="brandmark" href="#top" aria-label="GrabIt">
+        <span class="brand-disc" data-icon="arrow-down-to-line"></span>
+        <span><b>GRABIT</b><small data-i18n="brand.sub">DOWNLOAD · CONVERT</small></span>
+      </a>
+      <div class="nav-links">
+        <a href="#download" data-i18n="nav.download" aria-current="true">Download</a>
+        <a href="#convert" data-i18n="nav.convert">Convert</a>
+      </div>
+      <div class="nav-actions">
+        <button class="lang-toggle" id="langToggle" type="button" lang="ar">
+          <span data-icon="languages"></span><span data-i18n="lang.switch">العربية</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <main id="top">
+    <!-- ============================ Download ============================ -->
+    <section class="container" id="download">
+      <div class="hero">
+        <span class="eyebrow"><span class="live-dot"></span><span data-i18n="hero.eyebrow">YouTube · Instagram · Facebook</span></span>
+        <h1 data-i18n-html="hero.title">Save any video, <em>in any format.</em></h1>
+        <p class="lede" data-i18n="hero.lede">Paste a link to a video, reel or post. Choose a quality, save the file, then convert it here in your browser.</p>
+      </div>
+
+      <form class="lookup" id="lookupForm" novalidate>
+        <label class="sr-only" for="url" data-i18n="lookup.label">Link to a video, reel or post</label>
+        <div class="lookup-row">
+          <div class="signin-input">
+            <span data-icon="link"></span>
+            <input id="url" name="url" type="url" inputmode="url" autocomplete="off" spellcheck="false"
+                   data-i18n-ph="lookup.placeholder" placeholder="https://www.instagram.com/reel/…" />
+            <button class="icon-btn" type="button" id="clearUrl" hidden data-i18n-title="lookup.clear" title="Clear"><span data-icon="x"></span></button>
+          </div>
+          <button class="btn btn-primary" type="submit" id="lookupBtn">
+            <span data-i18n="lookup.go">Get media</span><span class="flip-rtl" data-icon="arrow-right"></span>
+          </button>
+        </div>
+        <ul class="sites" aria-label="Supported sites">
+          <li>YouTube</li><li>Instagram</li><li>Facebook</li><li>TikTok</li><li>X</li><li>Reddit</li><li>Vimeo</li><li>SoundCloud</li>
+        </ul>
+      </form>
+
+      <div id="lookupError" class="notice" role="alert" style="margin-top:20px;max-width:860px" hidden></div>
+
+      <article class="pane glass result-pane" id="result" style="margin-top:28px" hidden aria-live="polite"></article>
+    </section>
+
+    <!-- ============================ Convert ============================ -->
+    <section class="container section" id="convert">
+      <div class="two-col">
+        <div>
+          <div class="section-head">
+            <span class="eyebrow" data-i18n="conv.eyebrow">Runs in your browser</span>
+            <h2 data-i18n-html="conv.title">Convert a file, <em>on your device.</em></h2>
+            <p data-i18n="conv.lede">Change format, trim, resize or pull the sound out of a video. Files are processed by your browser and never uploaded.</p>
+          </div>
+          <div class="mini">
+            <div class="svc-card glass">
+              <span class="svc-icon" data-icon="layers"></span>
+              <div><h3 data-i18n="fact1.t">15 formats</h3><p data-i18n="fact1.p">MP4, WEBM, MOV, MKV, GIF, MP3, M4A, WAV, FLAC, OGG, JPG, PNG and more.</p></div>
+            </div>
+            <div class="svc-card glass">
+              <span class="svc-icon" data-icon="scissors"></span>
+              <div><h3 data-i18n="fact2.t">Trim and resize</h3><p data-i18n="fact2.p">Cut a clip by start and end time, scale it down, or remove the audio.</p></div>
+            </div>
+            <div class="svc-card glass">
+              <span class="svc-icon" data-icon="shield-check"></span>
+              <div><h3 data-i18n="fact3.t">Nothing is uploaded</h3><p data-i18n="fact3.p">The converter downloads once (about 30 MB), then works on files locally.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pane glass" id="converter">
+          <ol class="stepper" id="stepper">
+            <li class="current"><span>1</span><b data-i18n="step.file">Choose a file</b></li>
+            <li><span>2</span><b data-i18n="step.format">Pick a format</b></li>
+            <li><span>3</span><b data-i18n="step.convert">Convert</b></li>
+          </ol>
+
+          <div id="dropZone" class="drop">
+            <span class="svc-icon" data-icon="upload"></span>
+            <p><strong data-i18n="drop.title">Drop a file here</strong></p>
+            <p class="fine" data-i18n="drop.hint">Video, audio or image</p>
+            <label class="btn btn-ghost btn-sm" style="margin-top:6px">
+              <span data-i18n="drop.choose">Choose file</span>
+              <input type="file" id="fileInput" class="sr-only" accept="video/*,audio/*,image/*,.mkv,.flac,.opus,.m4a" />
+            </label>
+          </div>
+
+          <div id="fileCard" class="file-card" hidden>
+            <span class="svc-icon" data-icon="file"></span>
+            <div><b id="fileName"></b><small id="fileMeta"></small></div>
+            <button class="link-btn" type="button" id="changeFile" data-i18n="drop.change">Change</button>
+          </div>
+
+          <div id="formatStep" style="margin-top:26px" hidden>
+            <div class="opt-label" style="margin-bottom:12px" data-i18n="conv.to">Convert to</div>
+            <div class="fmt-groups" id="fmtGroups"></div>
+
+            <div class="opts" id="convOpts"></div>
+
+            <div class="convert-actions">
+              <button class="btn btn-primary" type="button" id="convertBtn"><span data-icon="refresh-cw"></span><span data-i18n="conv.go">Convert</span></button>
+              <span class="fine" id="convHint"></span>
+            </div>
+
+            <div class="progress" id="convProgress" hidden>
+              <div class="progress-track"><div class="progress-fill" id="convFill"></div></div>
+              <div class="progress-row"><strong id="convStatus"></strong><span id="convPct"></span></div>
+            </div>
+            <div id="convError" class="notice" role="alert" style="margin-top:18px" hidden></div>
+            <div class="done-row" id="convDone" hidden></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container fine">
+      <span data-i18n="foot.rights">Only download content you own or have permission to save.</span>
+      <span data-i18n="foot.built">Built with yt-dlp and ffmpeg.</span>
+    </div>
+  </footer>
+</body>
+</html>
