@@ -426,7 +426,9 @@ def download():
         if len(fmts) == 1 and fmts[0].get("ext") == "mp4" and http_only:
             return stream_direct(ydl, fmts[0], name, "video/mp4")
         maps = ["-map", "0:v:0", "-map", "1:a:0"] if len(fmts) == 2 else ["-map", "0"]
-        args = maps + ["-c", "copy", "-movflags", "frag_keyframe+empty_moov+default_base_moof", "-f", "mp4"]
+        # aac_adtstoasc: HLS sources carry AAC in ADTS framing, which MP4 can't hold as-is.
+        args = maps + ["-c", "copy", "-bsf:a", "aac_adtstoasc",
+                       "-movflags", "frag_keyframe+empty_moov+default_base_moof", "-f", "mp4"]
         return stream_ffmpeg(fmts, args, name, "video/mp4", approx)
 
     src = fmts[0]
@@ -435,7 +437,7 @@ def download():
         if src.get("ext") == "m4a" and http_only:
             return stream_direct(ydl, src, name, "audio/mp4")
         copy = (src.get("acodec") or "").startswith("mp4a")
-        args = ["-vn"] + (["-c:a", "copy"] if copy else ["-c:a", "aac", "-b:a", f"{bitrate}k"])
+        args = ["-vn"] + (["-c:a", "copy", "-bsf:a", "aac_adtstoasc"] if copy else ["-c:a", "aac", "-b:a", f"{bitrate}k"])
         args += ["-movflags", "frag_keyframe+empty_moov", "-f", "ipod"]
         return stream_ffmpeg([src], args, name, "audio/mp4", approx)
 
