@@ -34,9 +34,19 @@ Set these in **Project → Settings → Environment Variables**, then redeploy.
 
 ## What to expect from a cloud deployment
 
-- **YouTube** checks the reputation of the server's IP address. Vercel runs on cloud IPs, so expect YouTube links to fail with the bot check unless `GRABIT_PROXY` is set. The page explains this to visitors when it happens.
-- **Instagram and Facebook** often work for public reels and posts. Some posts, and heavy use, need `GRABIT_COOKIES`.
-- **TikTok, X, Reddit, Vimeo and SoundCloud** usually work as-is.
+Many sites refuse requests from cloud servers. Tested on the live deployment (November 2026), without a proxy or cookies:
+
+| Site | Result on Vercel |
+|------|------------------|
+| SoundCloud | Works (MP3 and M4A) |
+| Dailymotion | Works (video and audio) |
+| Direct links to .mp4 / .mp3 files | Work |
+| YouTube | Blocked: "Sign in to confirm you're not a bot" |
+| Instagram | Blocked: asks for login, even for public reels |
+| Vimeo, Reddit | Blocked: ask for login |
+| TikTok | Blocked: "Your IP address is blocked" |
+
+The page tells visitors plainly when a site refuses. To make the blocked sites work, set `GRABIT_PROXY` to a residential proxy (fixes YouTube, TikTok and most of the rest) and, for Instagram, `GRABIT_COOKIES` from a spare logged-in account. Run locally, from a home connection, most of these sites work without either.
 - **Time limit:** a download must finish within the function's 300 seconds. Long videos at high quality can hit it, and the page suggests a lower quality when they do. Pro plans can raise `maxDuration` in `vercel.json` (up to 800).
 - **Bandwidth:** every download passes through the function and counts towards your Vercel data transfer. For a public portfolio link, consider turning on Vercel's firewall rate limiting for `/api/download`.
 
