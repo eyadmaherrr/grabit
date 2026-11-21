@@ -1,5 +1,8 @@
 # GrabIt
 
+> **The iPhone app lives in [`mobile/`](mobile/README.md).** It downloads on the phone itself and has its own install guide. The rest of this folder is the web version and the server API, which the app uses as a fallback for less common sites.
+
+
 Download videos, reels and audio from YouTube, Instagram, Facebook, TikTok, X and other sites, then convert them between formats in the browser. English and Arabic, built on the Dr. Maher Mahmoud "Obsidian & Blue" design system.
 
 ## How it works
