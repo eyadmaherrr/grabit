@@ -42,6 +42,24 @@ MAX_ITEMS = 60
 app = Flask(__name__, static_folder=None)
 
 
+class RestoreApiPath:
+    """vercel.json rewrites /api/<x> to /api/index?__path=<x>; put the real path back."""
+
+    def __init__(self, wsgi_app):
+        self.wsgi_app = wsgi_app
+
+    def __call__(self, environ, start_response):
+        query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""), keep_blank_values=True)
+        sub = query.pop("__path", None)
+        if sub:
+            environ["PATH_INFO"] = "/api/" + sub[0].lstrip("/")
+            environ["QUERY_STRING"] = urllib.parse.urlencode(query, doseq=True)
+        return self.wsgi_app(environ, start_response)
+
+
+app.wsgi_app = RestoreApiPath(app.wsgi_app)
+
+
 # --------------------------------------------------------------------------- #
 # Helpers
 # --------------------------------------------------------------------------- #
@@ -448,7 +466,7 @@ def health():
 @app.get("/<path:path>")
 def static_files(path: str = "index.html"):
     if path.startswith("api/"):
-        raise ApiError("not_found", "Not found.", 404)
+        raise ApiError("not_found", f"No API route for /{path}.", 404)
     target = PUBLIC / path
     if not target.is_file():
         path = "index.html"
